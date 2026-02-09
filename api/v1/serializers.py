@@ -17,11 +17,14 @@ class SchoolSerializer(serializers.ModelSerializer):
 class AthleteSerializer(serializers.ModelSerializer):
     # Optional: Display the organization name instead of just ID
     organization_name = serializers.CharField(source='organization.name', read_only=True)
-    user_name = serializers.CharField(source='user.username', read_only=True)
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
 
     class Meta:
         model = Athlete
-        fields = ['id', 'user_name', 'sport', 'organization', 'organization_name']
+        fields = ['id', 'username', 'sport', 'organization', 'organization_name']
         
 class AchievementSerializer(serializers.ModelSerializer):
     class Meta:

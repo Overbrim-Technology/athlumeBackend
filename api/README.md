@@ -95,7 +95,95 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
 
 ### 1. App Home (`/api/v1/home/`)
 
-**GET** `/api/v1/home/` - Optional auth. Dashboard with high-level stats.
+**GET** `/api/v1/home/` - Optional auth. Returns home screen data including featured athletes, recent highlights, top schools, and optional search results.
+
+**Query Parameters:**
+- `q` (optional) - Search string to filter athletes by name, email, sport, or organization. Returns up to 100 matching athletes.
+
+**Response Example (without search):**
+```json
+{
+  "banner_message": "Welcome to the Athlete Portal",
+  "featured_athletes": [
+    {
+      "id": 1,
+      "user_name": "alex_smith",
+      "sport": "Swimming",
+      "organization": 3,
+      "organization_name": "City Aquatics"
+    }
+  ],
+  "top_schools": [
+    {
+      "id": 1,
+      "name": "Lincoln High School",
+      "logo": "https://example.com/lincoln-logo.png"
+    }
+  ],
+  "partner_organizations": [
+    {
+      "id": 3,
+      "name": "City Aquatics",
+      "logo": "https://example.com/logo.png",
+      "owner": 5
+    }
+  ],
+  "recent_highlights": [
+    {
+      "id": 1,
+      "title": "New Season Kickoff",
+      "body": "Athletes gather for the start of the new season...",
+      "image": "https://example.com/highlight.jpg",
+      "url": "https://example.com/article",
+      "published": true,
+      "created_at": "2024-02-01T10:30:00Z"
+    }
+  ]
+}
+```
+
+**Response with Search Example:**
+```json
+{
+  "banner_message": "Welcome to the Athlete Portal",
+  "featured_athletes": [...],
+  "top_schools": [...],
+  "partner_organizations": [...],
+  "recent_highlights": [...],
+  "search_results": [
+    {
+      "id": 5,
+      "user_name": "emma_swimmer",
+      "sport": "Swimming",
+      "organization": 3,
+      "organization_name": "City Aquatics"
+    },
+    {
+      "id": 12,
+      "user_name": "mike_swimmer",
+      "sport": "Swimming",
+      "organization": 3,
+      "organization_name": "City Aquatics"
+    }
+  ]
+}
+```
+
+**Usage:**
+```python
+import requests
+
+# Get home data
+response = requests.get("https://example.com/api/v1/home/")
+home_data = response.json()
+
+# Search for athletes
+response = requests.get(
+    "https://example.com/api/v1/home/",
+    params={"q": "Swimming"}
+)
+results = response.json()["search_results"]
+```
 
 ---
 
@@ -142,6 +230,8 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
 | --- | --- | --- | --- |
 | `GET` | `/api/v1/profiles/{id}/` | No | Get full athlete profile with achievements & stats |
 | `PATCH` | `/api/v1/profiles/{id}/` | Yes | Update profile info |
+
+> **Note:** Athlete profile edits should be performed via a dedicated frontend form, not Django admin. The admin interface is reserved for staff management only.
 
 **GET Response Example:**
 ```json
@@ -334,6 +424,32 @@ response = requests.patch(
         "instagram": "https://instagram.com/newprofile"
     }
 )
+
+if response.status_code == 200:
+    updated_profile = response.json()
+    print(f"Profile updated: {updated_profile['first_name']} {updated_profile['last_name']}")
+```
+
+### Get App Home Data
+
+```python
+import requests
+
+# Fetch home screen data (featured athletes, recent highlights, top schools)
+response = requests.get("https://timig.pythonanywhere.com/api/v1/home/")
+home = response.json()
+
+print(f"Featured athletes: {len(home['featured_athletes'])}")
+print(f"Recent highlights: {len(home['recent_highlights'])}")
+print(f"Top schools: {len(home['top_schools'])}")
+
+# Search for athletes by name or sport
+response = requests.get(
+    "https://timig.pythonanywhere.com/api/v1/home/",
+    params={"q": "Swimming"}
+)
+results = response.json().get("search_results", [])
+print(f"Found {len(results)} swimming athletes")
 ```
 
 ### Filter Athletes by Sport
@@ -347,6 +463,9 @@ response = requests.get(
     params={"sport": "Swimming", "page_size": 10}
 )
 athletes = response.json()["results"]
+
+for athlete in athletes:
+    print(f"{athlete['user_name']} - {athlete['sport']}")
 ```
 
 ---
@@ -398,6 +517,8 @@ GET /api/v1/athletes/?sport=Basketball&page_size=5
 4. **CORS:** Ensure your frontend origin is whitelisted in `CORS_ALLOWED_ORIGINS` on the server.
 
 5. **Token Expiration:** If you receive `401 Unauthorized`, the token has expired—prompt the user to log in again.
+
+6. **Athlete Profile Editing:** Athletes should update their profiles via a dedicated frontend form using the `PATCH /api/v1/profiles/{id}/` endpoint. Django admin is **not** intended for athlete use.
 
 ---
 

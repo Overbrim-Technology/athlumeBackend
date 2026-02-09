@@ -1,0 +1,83 @@
+{% extends "admin/change_form.html" %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{# Remove object-tools (history, delete, view-on-site) for athlete users #}
+{% block object-tools %}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{{ block.super }}
+
+{% if request.user.groups.filter(name='Athlete').exists %}
+<script>
+(function(){
+	function getCookie(name){
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== ''){
+			const cookies = document.cookie.split(';');
+			for (let i=0;i<cookies.length;i++){
+				const cookie = cookies[i].trim();
+				if (cookie.substring(0, name.length+1) === (name + '=')){
+					cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+	const csrftoken = getCookie('csrftoken');
+	const form = document.querySelector('form');
+	if(!form) return;
+	form.addEventListener('submit', function(e){
+		e.preventDefault();
+		const url = window.location.href;
+		const data = new FormData(form);
+		fetch(url, {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': csrftoken,
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			body: data,
+			credentials: 'same-origin',
+			redirect: 'follow'
+		}).then(function(resp){
+			return resp.text();
+		}).then(function(html){
+			try{
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(html, 'text/html');
+				const newForm = doc.querySelector('form');
+				if(newForm){
+					form.parentNode.replaceChild(newForm, form);
+				}
+				let msg = document.getElementById('athlete-save-msg');
+				if(!msg){
+					msg = document.createElement('div');
+					msg.id = 'athlete-save-msg';
+					msg.style = 'background:#dff0d8;padding:10px;margin-bottom:10px;border:1px solid #d6e9c6;color:#3c763d;';
+					const container = document.querySelector('#content-main') || document.body;
+					container.insertBefore(msg, container.firstChild);
+				}
+				msg.textContent = 'Saved.';
+				setTimeout(()=>{ if(msg) msg.style.display='none'; }, 3000);
+			}catch(err){
+				console.error(err);
+				alert('Save completed but updating the page failed. Refresh to see changes.');
+			}
+		}).catch(function(err){
+			console.error(err);
+			alert('Save failed. See console for details.');
+		});
+	}, false);
+})();
+</script>
+{% endif %}
+
+{% endblock %}

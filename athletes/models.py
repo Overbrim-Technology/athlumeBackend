@@ -25,12 +25,14 @@ class Person(models.Model):
     
 class Athlete(Person):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    age = models.IntegerField()
-    bio = models.TextField()
-    sport = models.CharField(max_length=250)
-    school = models.CharField(max_length=50)
-    graduation_year = models.IntegerField()
-    coach_name = models.CharField(max_length=100)
+    # Make fields optional at registration/onboarding so user can supply
+    # only core information (first/last/email/phone) during signup.
+    age = models.IntegerField(null=True, blank=True)
+    bio = models.TextField(blank=True, null=True)
+    sport = models.CharField(max_length=250, blank=True, null=True)
+    school = models.CharField(max_length=50, blank=True, null=True)
+    graduation_year = models.IntegerField(null=True, blank=True)
+    coach_name = models.CharField(max_length=100, blank=True, null=True)
     organization = models.ForeignKey(
         Organization, 
         on_delete=models.SET_NULL,
@@ -40,7 +42,16 @@ class Athlete(Person):
     )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - {self.sport} ({self.school})"
+        parts = [self.first_name, self.last_name]
+        name = " ".join([p for p in parts if p])
+        extras = []
+        if self.sport:
+            extras.append(self.sport)
+        if self.organization:
+            extras.append(f"{self.organization.name}")
+        if extras:
+            return f"{name} - {' '.join(extras)}"
+        return name
     
 class Profile(Athlete):
     # Link to the login account

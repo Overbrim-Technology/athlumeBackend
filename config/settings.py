@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'emoji_picker',
     'api',
+    'home',
     'organizations',
     'athletes',
 ]
@@ -89,7 +90,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,6 +159,7 @@ STATIC_URL = 'static/'
 # dj_rest_auth Configuration
 REST_AUTH = {
     'REGISTER_SERIALIZER': 'api.v1.auth_serializers.CustomRegisterSerializer',
+    'LOGIN_SERIALIZER': 'api.v1.auth_serializers.CustomLoginSerializer',
 }
 
 

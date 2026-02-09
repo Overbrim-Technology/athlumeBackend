@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+
+{% block user-tools %}
+  {{ block.super }}
+  {% if request.user.is_authenticated and request.user.organization %}
+    <a class="button" href="{% url 'admin:organizations_organization_my_org' %}" style="margin-left:8px;">My Organization</a>
+  {% endif %}
+{% endblock %}
+{# Hide irrelevant permission messages for non-superusers (they already have restricted views) #}
+{% if request.user.is_authenticated and not request.user.is_superuser %}
+<style>
+  .messagelist { display: none; }
+</style>
+{% endif %}
+{# If the logged-in user is in the Athlete group, hide the left app/module list entirely
+   so athletes only see the change form when they visit their profile change URL. #}
+{% if request.user.is_authenticated %}
+  {% for g in request.user.groups.all %}
+    {% if g.name == 'Athlete' %}
+      <style>
+        /* Collapse the admin sidebar for athletes: shrink and hide labels, keep minimal bar */
+        #nav-sidebar, .app-list { width: 56px !important; min-width: 56px !important; }
+        .app-list h2, .app-list ul, .app-list .model { display: none !important; }
+        /* reduce padding and margins so the main area gains space */
+        #content, #content-main, .col-tools, .container { margin-left: 64px !important; }
+        /* hide related panels that reference models */
+        .related, .field-user, .field-organization { display: none !important; }
+      </style>
+    {% endif %}
+  {% endfor %}
+{% endif %}

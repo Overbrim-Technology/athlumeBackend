@@ -19,10 +19,14 @@ Handled by `dj-rest-auth`. All POST requests must include `Content-Type: applica
 
 | Action | Endpoint | Method | Required Fields |
 | --- | --- | --- | --- |
-| **Register** | `/api/auth/registration/` | `POST` | `username`, `email`, `password`, `re_password` |
+| **Register** | `/api/auth/registration/` | `POST` | `username`, `email`, `password`, `re_password`, `role` |
 | **Login** | `/api/auth/login/` | `POST` | `username`, `password` |
 | **Logout** | `/api/auth/logout/` | `POST` | (Token required in header) |
 | **Password Reset** | `/api/auth/password/reset/` | `POST` | `email` |
+
+### Role-Based Registration
+
+When a user registers, they **must specify a `role`** - either `athlete` or `organization`. Based on the role, the backend automatically creates the appropriate record (Athlete or Organization owner).
 
 **Login Response Example:**
 ```json
@@ -35,6 +39,50 @@ Handled by `dj-rest-auth`. All POST requests must include `Content-Type: applica
   }
 }
 ```
+
+**Register as Athlete (Minimal):**
+```json
+{
+  "username": "swimmer_alex",
+  "email": "alex@example.com",
+  "password": "SecurePass123!",
+  "re_password": "SecurePass123!",
+  "role": "athlete"
+}
+```
+
+**Register as Athlete (with optional details):**
+```json
+{
+  "username": "swimmer_alex",
+  "email": "alex@example.com",
+  "password": "SecurePass123!",
+  "re_password": "SecurePass123!",
+  "role": "athlete",
+  "first_name": "Alex",
+  "last_name": "Smith",
+  "phone": "555-1234",
+  "sport": "Swimming",
+  "school": "Lincoln High School"
+}
+```
+
+**Register as Organization Manager:**
+```json
+{
+  "username": "coach_martin",
+  "email": "martin@example.com",
+  "password": "SecurePass123!",
+  "re_password": "SecurePass123!",
+  "role": "organization",
+  "org_name": "City Aquatics Sports Club",
+  "phone": "555-5678"
+}
+```
+
+**Role Field Options:**
+- `"athlete"` - Registers user as an athlete with profile
+- `"organization"` - Registers user as an organization/school manager
 
 **Usage:** Save the `key` value and include it in the header for all protected requests:
 ```
@@ -182,29 +230,72 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
 
 ## Python Examples
 
-### Register & Login
+### Register as Athlete (with role)
 
 ```python
 import requests
 
 BASE_URL = "https://timig.pythonanywhere.com/api"
 
-# Register
+# Register as athlete - role field is REQUIRED
 response = requests.post(
     f"{BASE_URL}/auth/registration/",
     json={
-        "username": "alex_smith",
+        "username": "swimmer_alex",
         "email": "alex@example.com",
         "password": "securePass123!",
-        "re_password": "securePass123!"
+        "re_password": "securePass123!",
+        "role": "athlete",  # REQUIRED: 'athlete' or 'organization'
+        "first_name": "Alex",
+        "last_name": "Smith",
+        "sport": "Swimming",
+        "school": "Lincoln High School"
     }
 )
-token = response.json()["key"]
 
-# Or login
+if response.status_code == 201:
+    token = response.json()["key"]
+    print(f"Registered successfully! Token: {token}")
+else:
+    print(f"Error: {response.json()}")
+```
+
+### Register as Organization Manager (with role)
+
+```python
+import requests
+
+BASE_URL = "https://timig.pythonanywhere.com/api"
+
+# Register as organization manager
+response = requests.post(
+    f"{BASE_URL}/auth/registration/",
+    json={
+        "username": "coach_martin",
+        "email": "martin@example.com",
+        "password": "securePass123!",
+        "re_password": "securePass123!",
+        "role": "organization",  # REQUIRED: 'athlete' or 'organization'
+        "org_name": "City Aquatics Sports Club",
+        "phone": "555-5678"
+    }
+)
+
+if response.status_code == 201:
+    token = response.json()["key"]
+    print(f"Organization registered successfully! Token: {token}")
+```
+
+### Login
+
+```python
+import requests
+
+BASE_URL = "https://timig.pythonanywhere.com/api"
+
 response = requests.post(
     f"{BASE_URL}/auth/login/",
-    json={"username": "alex_smith", "password": "securePass123!"}
+    json={"username": "swimmer_alex", "password": "securePass123!"}
 )
 token = response.json()["key"]
 

@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount', # Optional: for Google/Facebook login
     'dj_rest_auth.registration',
-    'emoji_picker',
     'api',
     'home',
     'organizations',

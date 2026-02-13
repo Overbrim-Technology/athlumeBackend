@@ -39,6 +39,7 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name', 'organization', 'sport')
     # Don't show user/organization selection to non-superusers; auto-fill instead
     exclude = ('user', 'organization')
+    search_fields = ('first_name', 'last_name', 'email')
     actions = None
 
     def get_queryset(self, request):

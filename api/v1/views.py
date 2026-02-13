@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
+from django.db.models import Q
 from organizations.models import Organization, School
 from athletes.models import Athlete, Profile
 from .serializers import OrganizationSerializer, SchoolSerializer, AthleteSerializer, ProfileSerializer
@@ -131,51 +132,60 @@ class ProfileViewSet(viewsets.ModelViewSet):
 # --- The App Home API ---
 class AppHomeView(APIView):
     """
+    Public Home Screen Endpoint.
     Returns a consolidated JSON payload for the app's home screen.
     Reduces the number of HTTP requests the mobile app needs to make.
     """
+    permission_classes = [AllowAny]
+
     def get(self, request):
-        # Query params
-        q = request.GET.get('q')  # search query
-
-        # 1. Search (if query provided)
-        search_results = None
-        if q:
-            search_qs = Athlete.objects.filter(
-                models.Q(first_name__icontains=q) |
-                models.Q(last_name__icontains=q) |
-                models.Q(email__icontains=q) |
-                models.Q(sport__icontains=q) |
-                models.Q(organization__name__icontains=q)
-            ).distinct()
-            search_results = AthleteSerializer(search_qs, many=True).data
-
-        # 2. Featured athletes chosen by admin (via FeaturedAthlete entries)
+        # HOME DATA LOGIC ---
         featured_entries = FeaturedAthlete.objects.filter(active=True).select_related('athlete')[:5]
         featured_athletes = [fe.athlete for fe in featured_entries]
 
-        # 3. Other homepage data
-        top_schools = School.objects.all()[:3]
-        recent_orgs = Organization.objects.exclude(school__isnull=False)[:3]
+        # Top Schools: Order by name or ID to prevent "shuffling" on refresh
+        top_schools = School.objects.all().order_by('name')[:3]
 
-        # 4. Recent highlights (news) posted by admin
+        # Recent Orgs: explicitly order by creation date
+        recent_orgs = Organization.objects.exclude(school__isnull=False)\
+                                          .order_by('-id')[:3]
+
+        # Highlights: already ordered correctly in your code
         highlights_qs = Highlight.objects.filter(published=True).order_by('-created_at')[:5]
 
-        # 5. Serialize
-        featured_data = AthleteSerializer(featured_athletes, many=True).data
-        school_data = SchoolSerializer(top_schools, many=True).data
-        org_data = OrganizationSerializer(recent_orgs, many=True).data
-        highlights_data = HighlightSerializer(highlights_qs, many=True).data
-
+        # --- 3. SERIALIZATION ---
         payload = {
             "banner_message": "Welcome to the Athlete Portal",
-            "featured_athletes": featured_data,
-            "top_schools": school_data,
-            "partner_organizations": org_data,
-            "recent_highlights": highlights_data,
+            "featured_athletes": ProfileSerializer(featured_athletes, many=True).data,
+            "top_schools": SchoolSerializer(top_schools, many=True).data,
+            "partner_organizations": OrganizationSerializer(recent_orgs, many=True).data,
+            "recent_highlights": HighlightSerializer(highlights_qs, many=True).data,
         }
 
-        if search_results is not None:
-            payload['search_results'] = search_results
-
         return Response(payload)
+
+
+class GlobalSearchView(APIView):
+    permission_classes = [AllowAny] # Public search
+
+    def get(self, request):
+        q = request.GET.get('q', '').strip()
+        
+        # If empty search, return empty list immediately
+        if not q or len(q) < 2:
+            return Response([])
+
+        # Perform the search
+        search_qs = Profile.objects.filter(
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q) |
+            Q(email__icontains=q) |
+            Q(sport__icontains=q) |
+            Q(organization__name__icontains=q)
+        ).distinct()
+
+        # LIMIT TO 20 RESULTS
+        # This makes the response lightning fast
+        results = search_qs[:20]
+
+        return Response(ProfileSerializer(results, many=True).data)

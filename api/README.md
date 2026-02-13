@@ -90,13 +90,13 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
 ## Core Resources (`/api/v1/`)
 
 ### 1. App Home (`/api/v1/home/`)
-
+#### Home
 **GET** `/api/v1/home/` - Optional auth. Returns home screen data including featured athletes, recent highlights, top schools, and optional search results.
 
 **Query Parameters:**
 - `q` (optional) - Search string to filter athletes by name, email, sport, or organization. Returns up to 100 matching athletes.
 
-**Response Example (without search):**
+**Response Example:**
 ```json
 {
   "banner_message": "Welcome to the Athlete Portal",
@@ -136,32 +136,45 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
   ]
 }
 ```
+#### Search
+**GET** `/api/v1/search/?q={query_param}` - Returns search results.
 
-**Response with Search Example:**
+**Query Parameters:**
+- `q` - Search string to filter athletes by name, email, sport, or organization. Returns up to 20 matching athletes.
+**Response:**
 ```json
-{
-  "banner_message": "Welcome to the Athlete Portal",
-  "featured_athletes": [...],
-  "top_schools": [...],
-  "partner_organizations": [...],
-  "recent_highlights": [...],
-  "search_results": [
-    {
-      "id": 5,
-      "first_name": "Alex",
-      "sport": "Swimming",
-      "organization": 3,
-      "organization_name": "City Aquatics"
-    },
-    {
-      "id": 12,
-      "first_name": "Alex",
-      "sport": "Swimming",
-      "organization": 3,
-      "organization_name": "City Aquatics"
-    }
-  ]
-}
+[
+  {
+    "id": 102,
+    "first_name": "Marcus",
+    "last_name": "Rashford",
+    "email": "m.rashford@example.com",
+    "sport": "Soccer",
+    "school": "Manchester Academy",
+    "organization_name": "United Sports Group",
+    "profile_image": "https://your-domain.com/media/profiles/rashford.jpg"
+  },
+  {
+    "id": 45,
+    "first_name": "Alex",
+    "last_name": "Morgan",
+    "email": "amorgan@example.com",
+    "sport": "Soccer",
+    "school": "California High",
+    "organization_name": "Pride Academy",
+    "profile_image": null
+  },
+  {
+    "id": 210,
+    "first_name": "Sam",
+    "last_name": "Kerr",
+    "email": "skerr@soccerpro.au",
+    "sport": "Soccer",
+    "school": "Perth West",
+    "organization_name": "Matildas Club",
+    "profile_image": "https://your-domain.com/media/profiles/kerr.jpg"
+  }
+]
 ```
 
 **Usage:**

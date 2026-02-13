@@ -20,7 +20,7 @@ class AthleteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Athlete
-        fields = ['id', 'sport', 'organization', 'organization_name']
+        fields = ['first_name','last_name','id', 'sport', 'organization', 'organization_name']
         
 class AchievementSerializer(serializers.ModelSerializer):
     class Meta:

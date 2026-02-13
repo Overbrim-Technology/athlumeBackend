@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from athletes.models import Profile
+
 
 class Highlight(models.Model):
     title = models.CharField(max_length=200)
@@ -19,9 +21,7 @@ class Highlight(models.Model):
 
 
 class FeaturedAthlete(models.Model):
-    from athletes.models import Athlete
-
-    athlete = models.ForeignKey('athletes.Athlete', on_delete=models.CASCADE, related_name='featured_entries')
+    athlete = models.ForeignKey('athletes.Profile', on_delete=models.CASCADE, related_name='featured_entries')
     order = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)

@@ -32,9 +32,12 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+AUTH_USER_MODEL = 'users.User'
+
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +50,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount', # Optional: for Google/Facebook login
+    # 'allauth.socialaccount', # Optional: for Google/Facebook login
     'dj_rest_auth.registration',
     'api',
     'home',
@@ -178,6 +181,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 REST_AUTH = {
     'REGISTER_SERIALIZER': 'api.v1.auth_serializers.CustomRegisterSerializer',
     'LOGIN_SERIALIZER': 'api.v1.auth_serializers.CustomLoginSerializer',
+    'USER_DETAILS_SERIALIZER': 'api.v1.auth_serializers.UserSerializer',
 }
 
 

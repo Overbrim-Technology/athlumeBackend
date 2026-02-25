@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.models import TokenProxy
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken, EmailAddress
 
 from .models import User
@@ -10,7 +10,7 @@ try:
     admin.site.unregister(SocialApp)
     admin.site.unregister(SocialToken)
     admin.site.unregister(EmailAddress)
-    admin.site.unregister(Token)
+    admin.site.unregister(TokenProxy)
 except admin.sites.NotRegistered:
     pass
 

@@ -37,7 +37,6 @@ AUTH_USER_MODEL = 'users.User'
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,8 +49,9 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'allauth',
     'allauth.account',
-    # 'allauth.socialaccount', # Optional: for Google/Facebook login
+    'allauth.socialaccount', # Optional: for Google/Facebook login
     'dj_rest_auth.registration',
+    'users',
     'api',
     'home',
     'organizations',

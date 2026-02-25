@@ -26,20 +26,20 @@ class CustomRegisterSerializer(RegisterSerializer):
     role = serializers.ChoiceField(
         choices=ROLE_CHOICES,
         required=True,
-        help_text="Select 'athlete' to register as an athlete, or 'organization' to manage a school/organization."
+        help_text="Select 'Athlete' to register as an athlete, or 'Organization/School Manager' to manage a school/organization."
     )
     
     # Core fields required at onboarding
-    first_name = serializers.CharField(required=False, allow_blank=True, max_length=30)
-    last_name = serializers.CharField(required=False, allow_blank=True, max_length=30)
-    phone = serializers.CharField(required=False, allow_blank=False, max_length=15)
+    first_name = serializers.CharField(required=True, allow_blank=False, max_length=30)
+    last_name = serializers.CharField(required=True, allow_blank=False, max_length=30)
+    phone = serializers.CharField(required=False, allow_blank=False, max_length=20)
     
     # Organization-specific fields
-    org_name = serializers.CharField(required=False, allow_blank=True, max_length=100)
+    org_name = serializers.CharField(required=False, allow_blank=True, max_length=150)
     
     # Athlete-specific fields
     sport = serializers.CharField(required=False, allow_blank=True, max_length=250)
-    school = serializers.CharField(required=False, allow_blank=True, max_length=50)
+    school = serializers.CharField(required=False, allow_blank=True, max_length=150)
     
     def save(self, request):
         """

@@ -23,6 +23,7 @@ Handled by `dj-rest-auth`. All POST requests must include `Content-Type: applica
 | **Login** | `/api/auth/login/` | `POST` | `username`, `password` |
 | **Logout** | `/api/auth/logout/` | `POST` | (Token required in header) |
 | **Password Reset** | `/api/auth/password/reset/` | `POST` | `email` |
+| **User** | `/api/auth/user/` | `GET` | `` |
 
 ### Role-Based Registration
 
@@ -83,6 +84,17 @@ When a user registers, they **must specify a `role`** - either `athlete` or `org
 **Usage:** Save the `key` value and include it in the header for all protected requests:
 ```
 Authorization: Token a1b2c3d4e5f6g7h8i9j0
+```
+
+**User Response Example:**
+```json
+{
+  "id": 7,
+  "email": "alex@example.com",
+  "role": "athlete",
+  "first_name": "Alex",
+  "last_name": "Smith",
+}
 ```
 
 ---

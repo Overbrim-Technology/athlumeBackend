@@ -2,10 +2,11 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import LoginSerializer
 from rest_framework import serializers
 from django.conf import settings
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -48,75 +49,79 @@ class CustomRegisterSerializer(RegisterSerializer):
         from athletes.models import Profile
         from organizations.models import Organization
         from django.contrib.auth.models import Group
-        
-        # Call parent save to create the User object
-        user = super().save(request)
-        
-        # Set username to email for easier authentication
-        user.username = user.email
-        user.save()
-        
-        # Get the role from the validated data
-        role = self.validated_data.get('role')
-        
-        # Extract common fields
-        first_name = self.validated_data.get('first_name', '')
-        last_name = self.validated_data.get('last_name', '')
-        phone = self.validated_data.get('phone', '')
-        email = user.email
 
-        # keep User model first/last in sync
-        try:
-            user.first_name = first_name
-            user.last_name = last_name
-            user.save()
-        except Exception:
-            # If user model does not accept these fields, ignore
-            pass
+        with transaction.atomic():
         
-        # Create the appropriate record based on role
-        if role == 'athlete':
-            # Create Profile (which inherits from Athlete) with only supplied fields
-            profile_data = {
-                'user': user,
-                'first_name': first_name,
-                'last_name': last_name,
-                'phone': phone,
-                'email': email,
-            }
-            # Optional athlete fields
-            if 'sport' in self.validated_data:
-                profile_data['sport'] = self.validated_data.get('sport')
-            if 'school' in self.validated_data:
-                profile_data['school'] = self.validated_data.get('school')
+            # Call parent save to create the User object
+            user = super().save(request)
+            
+            # Set username to email for easier authentication
+            user.username = user.email
+            user.save()
+            
+            # Get the role from the validated data
+            role = self.validated_data.get('role')
+            
+            # Extract common fields
+            first_name = self.validated_data.get('first_name', '')
+            last_name = self.validated_data.get('last_name', '')
+            phone = self.validated_data.get('phone', '')
+            email = user.email
 
-            Profile.objects.create(**profile_data)
-        
-        elif role == 'organization':
-            org_name = self.validated_data.get('org_name') or user.username
-            org_data = {
-                'owner': user,
-                'name': org_name,
-                'email': email,
-            }
-            # include phone if provided
-            if phone:
-                org_data['phone'] = phone
-            # optional address/state/city can be filled later
-            Organization.objects.create(**org_data)
-        
-        # Assign user to appropriate group (do NOT make them staff)
-        if role == 'athlete':
-            athlete_group = Group.objects.get(name='Athlete')
-            user.groups.add(athlete_group)
-            user.save()
-        elif role == 'organization':
-            org_owner_group = Group.objects.get(name='Organization Owner')
-            user.groups.add(org_owner_group)
-            user.is_staff = True # Grant admin site access for organization owners to manage their org/athletes
-            user.save()
-        
-        return user
+            # keep User model first/last in sync
+            try:
+                user.first_name = first_name
+                user.last_name = last_name
+                user.role = role
+                user.save()
+            except Exception:
+                # If user model does not accept these fields, ignore
+                pass
+            
+            # Create the appropriate record based on role
+            if role == 'athlete':
+                # Create Profile (which inherits from Athlete) with only supplied fields
+                profile_data = {
+                    'user': user,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'phone': phone,
+                    'email': email,
+                }
+                # Optional athlete fields
+                if 'sport' in self.validated_data:
+                    profile_data['sport'] = self.validated_data.get('sport')
+                if 'school' in self.validated_data:
+                    profile_data['school'] = self.validated_data.get('school')
+                
+                Profile.objects.create(**profile_data)
+            
+            elif role == 'organization':
+                org_name = self.validated_data.get('org_name') or user.username
+                org_data = {
+                    'owner': user,
+                    'name': org_name,
+                    'email': email,
+                }
+                # include phone if provided
+                if phone:
+                    org_data['phone'] = phone
+                # optional address/state/city can be filled later
+                Organization.objects.create(**org_data)
+
+
+            # Assign user to appropriate group (do NOT make them staff)
+            if role == 'athlete':
+                athlete_group = Group.objects.get(name='Athlete')
+                user.groups.add(athlete_group)
+                user.save()
+            elif role == 'organization':
+                org_owner_group = Group.objects.get(name='Organization Owner')
+                user.groups.add(org_owner_group)
+                user.is_staff = True # Grant admin site access for organization owners to manage their org/athletes
+                user.save()
+            
+            return user
 
 class CustomLoginSerializer(LoginSerializer):
     """
@@ -148,3 +153,12 @@ class CustomLoginSerializer(LoginSerializer):
         
         attrs['user'] = user
         return attrs
+
+
+User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    role = serializers.ReadOnlyField()
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'role', 'first_name', 'last_name')

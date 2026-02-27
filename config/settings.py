@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'home',
     'organizations',
     'athletes',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,9 @@ MIDDLEWARE = [
 ]
 
 SITE_ID = 1
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Optional: Disable email verification for development (makes testing easier)
 ACCOUNT_EMAIL_VERIFICATION = 'none'

@@ -123,14 +123,14 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
     {
       "id": 1,
       "name": "Lincoln High School",
-      "logo": "https://example.com/lincoln-logo.png"
+      "logo": "{API_URL}/org_logos/lincoln-logo.png"
     }
   ],
   "partner_organizations": [
     {
       "id": 3,
       "name": "City Aquatics",
-      "logo": "https://example.com/logo.png",
+      "logo": "{API_URL}/org_logos/logo.png",
       "owner": 5
     }
   ],

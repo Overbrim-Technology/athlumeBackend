@@ -4,7 +4,7 @@ from athletes.models import Athlete, Profile, Achievement, Stat, Video
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
-    org_logos = serializers.ImageField(use_url=True)
+    logo = serializers.ImageField(use_url=True)
     class Meta:
         model = Organization
         fields = '__all__'

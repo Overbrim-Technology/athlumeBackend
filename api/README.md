@@ -6,9 +6,11 @@ This API serves as the backbone for managing athlete portfolios, organizational 
 
 ## 🚀 Base Configuration
 
-* **BASE URL:** `https://timig.pythonanywhere.com`
-* **API Root:** `https://timig.pythonanywhere.com/api/`
-* **Auth Root:** `https://timig.pythonanywhere.com/api/auth/`
+* **API LIVE URL:** `https://admin.athlumesports.com/admin`
+* **API DEV URL:** `https://timig.pythonanywhere.com`
+
+* **API Root:** `{URL}/api/`
+* **Auth Root:** `{URL}/api/auth/`
 * **Header Required:** `Content-Type: application/json`
 
 ---
@@ -137,13 +139,14 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
       "id": 1,
       "title": "New Season Kickoff",
       "body": "Athletes gather for the start of the new season...",
-      "image": "https://example.com/highlight.jpg",
+      "image": "{API_URL}/highlight_images/highlight.jpg",
       "url": "https://example.com/article",
       "published": true,
       "created_at": "2024-02-01T10:30:00Z"
     }
   ]
 }
+
 ```
 #### Search
 **GET** `/api/v1/search/?q={query_param}` - Returns search results.
@@ -161,7 +164,7 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
     "sport": "Soccer",
     "school": "Manchester Academy",
     "organization_name": "United Sports Group",
-    "profile_image": "https://your-domain.com/media/profiles/rashford.jpg"
+    "profile_image": "{API_URL}/profile_picture/rashford.jpg"
   },
   {
     "id": 45,
@@ -181,7 +184,7 @@ Authorization: Token a1b2c3d4e5f6g7h8i9j0
     "sport": "Soccer",
     "school": "Perth West",
     "organization_name": "Matildas Club",
-    "profile_image": "https://your-domain.com/media/profiles/kerr.jpg"
+    "profile_image": "{API_URL}/profile_picture/kerr.jpg"
   }
 ]
 ```
@@ -261,8 +264,8 @@ results = response.json()["search_results"]
   "school": "Lincoln High School",
   "graduation_year": 2024,
   "organization_name": "City Aquatics",
-  "profile_picture": "https://example.com/profile-pic.jpg",
-  "banner": "https://example.com/banner.jpg",
+  "profile_picture": "{API_URL}/profile_picture/profile-pic.jpg",
+  "banner": "{API_URL}/profile_banner/banner.jpg",
   "youtube": "https://youtube.com/user/alexsmith",
   "facebook": "https://facebook.com/alexsmith",
   "x": "https://x.com/alexsmith",
@@ -313,7 +316,7 @@ results = response.json()["search_results"]
 {
   "id": 1,
   "name": "City Aquatics",
-  "logo": "https://example.com/aquatics-logo.png",
+  "logo": "{API_URL}/org_logos/aquatics-logo.png",
   "owner": 3
 }
 ```
@@ -332,7 +335,7 @@ Redirects to {BASE_URL}/admin/
 {
   "id": 1,
   "name": "Lincoln High School",
-  "logo": "https://example.com/lincoln-logo.png"
+  "logo": "{API_URL}/org_logos/lincoln-logo.png"
 }
 ```
 

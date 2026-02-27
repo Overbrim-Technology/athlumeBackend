@@ -1,6 +1,7 @@
 # api/v1/urls.py
 
 from django.urls import path, include
+from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 
 # Import your views from the v1/views folder

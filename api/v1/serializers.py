@@ -4,6 +4,7 @@ from athletes.models import Athlete, Profile, Achievement, Stat, Video
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
+    org_logo = serializers.ImageField(use_url=True)
     class Meta:
         model = Organization
         fields = '__all__'
@@ -41,6 +42,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     achievements = AchievementSerializer(many=True, read_only=True)
     stats = StatSerializer(many=True, read_only=True)
     videos = VideoSerializer(many=True, read_only=True)
+    profile_picture = serializers.ImageField(use_url=True)
+    banner = serializers.ImageField(use_url=True)
 
     organization_name = serializers.CharField(source='organization.name', read_only=True)
 

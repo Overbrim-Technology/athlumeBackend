@@ -74,7 +74,7 @@ MIDDLEWARE = [
 SITE_ID = 1
 
 MEDIA_URL = 'https://admin.athlumesports.com/'
-MEDIA_ROOT = '/home/athlmaot/admin/media/'
+MEDIA_ROOT = '/home/athlmaot/admin/athlumeBackend/media/'
 
 # Optional: Disable email verification for development (makes testing easier)
 ACCOUNT_EMAIL_VERIFICATION = 'none'

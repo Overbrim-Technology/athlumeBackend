@@ -74,7 +74,7 @@ MIDDLEWARE = [
 SITE_ID = 1
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = '/home/athlmaot/public_html/media/'
 
 # Optional: Disable email verification for development (makes testing easier)
 ACCOUNT_EMAIL_VERIFICATION = 'none'

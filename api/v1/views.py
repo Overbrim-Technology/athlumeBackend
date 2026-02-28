@@ -156,10 +156,10 @@ class AppHomeView(APIView):
         # --- 3. SERIALIZATION ---
         payload = {
             "banner_message": "Welcome to the Athlete Portal",
-            "featured_athletes": ProfileSerializer(featured_athletes, many=True).data,
-            "top_schools": SchoolSerializer(top_schools, many=True).data,
-            "partner_organizations": OrganizationSerializer(recent_orgs, many=True).data,
-            "recent_highlights": HighlightSerializer(highlights_qs, many=True).data,
+            "featured_athletes": ProfileSerializer(featured_athletes, many=True, context={"request": request}).data,
+            "top_schools": SchoolSerializer(top_schools, many=True, context={"request": request}).data,
+            "partner_organizations": OrganizationSerializer(recent_orgs, many=True, context={"request": request}).data,
+            "recent_highlights": HighlightSerializer(highlights_qs, many=True, context={"request": request}).data,
         }
 
         return Response(payload)

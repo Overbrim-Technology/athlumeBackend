@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.admin.forms import AdminAuthenticationForm
+from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import TokenProxy
 from allauth.socialaccount.models import SocialAccount, SocialApp, SocialToken, EmailAddress
 
@@ -13,6 +15,17 @@ try:
     admin.site.unregister(TokenProxy)
 except admin.sites.NotRegistered:
     pass
+
+
+class EmailAdminAuthenticationForm(AdminAuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Override the label for the username field
+        self.fields['username'].label = _('Email')
+        # Optional: You can also add a placeholder or help text
+        self.fields['username'].widget.attrs.update({'autofocus': True})
+
+admin.site.login_form = EmailAdminAuthenticationForm
 
 
 # Register your models here.

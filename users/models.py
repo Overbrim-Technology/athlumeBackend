@@ -23,7 +23,7 @@ class User(AbstractUser):
         if hasattr(self, 'athlete') or 'Athlete' in group_names:
             return 'athlete'
 
-        if hasattr(self, 'organization') or 'Organization' in group_names:
+        if hasattr(self, 'organization') or 'Organization Owner' in group_names:
             return 'organization'
 
         return 'user'

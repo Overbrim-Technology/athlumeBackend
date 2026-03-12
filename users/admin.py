@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin  as BaseUserAdmin
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import TokenProxy
@@ -30,7 +31,7 @@ admin.site.login_form = EmailAdminAuthenticationForm
 
 # Register your models here.
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(BaseUserAdmin):
     model = User
     list_display = ('email', 'first_name', 'last_name', 'role')
     search_fields = ('email', 'first_name', 'last_name')

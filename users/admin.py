@@ -34,3 +34,4 @@ class UserAdmin(admin.ModelAdmin):
     model = User
     list_display = ('email', 'first_name', 'last_name', 'role')
     search_fields = ('email', 'first_name', 'last_name')
+    filter_horizontal = ('groups', 'user_permissions')

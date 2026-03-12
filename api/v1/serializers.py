@@ -44,6 +44,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     videos = VideoSerializer(many=True, read_only=True)
     profile_picture = serializers.ImageField(use_url=True)
     banner = serializers.ImageField(use_url=True)
+    role = serializers.CharField(source='user.role', read_only=True)
 
     organization_name = serializers.CharField(source='organization.name', read_only=True)
 
@@ -52,6 +53,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['id',
                   'first_name',
                   'last_name',
+                  'role',
                   'email',
                   'bio',
                   'sport',

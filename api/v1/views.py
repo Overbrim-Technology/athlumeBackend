@@ -131,29 +131,32 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
 # --- The App Home API ---
 class AppHomeView(APIView):
-    """
-    Public Home Screen Endpoint.
-    Returns a consolidated JSON payload for the app's home screen.
-    Reduces the number of HTTP requests the mobile app needs to make.
-    """
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # HOME DATA LOGIC ---
-        featured_entries = FeaturedAthlete.objects.filter(active=True).select_related('athlete')[:5]
+        # 1. Optimized Featured Athletes
+        # We follow the relationship from FeaturedAthlete -> Athlete -> User/Organization
+        featured_entries = FeaturedAthlete.objects.filter(active=True).select_related(
+            'athlete__user',          # To get first/last name
+            'athlete__organization'   # To get the school/org name
+        )[:5]
         featured_athletes = [fe.athlete for fe in featured_entries]
 
-        # Top Schools: Order by name or ID to prevent "shuffling" on refresh
+        # 2. Schools (Usually simple, but order_by is good)
         top_schools = School.objects.all().order_by('name')[:3]
 
-        # Recent Orgs: explicitly order by creation date
-        recent_orgs = Organization.objects.exclude(school__isnull=False)\
-                                          .order_by('-id')[:3]
+        # 3. Organizations
+        recent_orgs = Organization.objects.exclude(school__isnull=False).select_related(
+            'owner'  # If the serializer shows owner info
+        ).order_by('-id')[:3]
 
-        # Highlights: already ordered correctly in your code
-        highlights_qs = Highlight.objects.filter(published=True).order_by('-created_at')[:5]
+        # 4. Highlights (Crucial optimization)
+        # Highlights almost always show the Athlete's name or photo
+        highlights_qs = Highlight.objects.filter(published=True).select_related(
+            'athlete__user'
+        ).order_by('-created_at')[:5]
 
-        # --- 3. SERIALIZATION ---
+        # --- SERIALIZATION ---
         payload = {
             "banner_message": "Welcome to the Athlete Portal",
             "featured_athletes": ProfileSerializer(featured_athletes, many=True, context={"request": request}).data,
@@ -170,22 +173,20 @@ class GlobalSearchView(APIView):
 
     def get(self, request):
         q = request.GET.get('q', '').strip()
-        
-        # If empty search, return empty list immediately
         if not q or len(q) < 2:
             return Response([])
 
-        # Perform the search
-        search_qs = Profile.objects.filter(
+        # We use select_related to grab the User and Organization 
+        # so the Serializer doesn't have to hit the DB again.
+        results = Profile.objects.select_related(
+            'user', 
+            'organization'
+        ).prefetch_related('user__groups').filter(
             Q(first_name__icontains=q) |
             Q(last_name__icontains=q) |
             Q(email__icontains=q) |
             Q(sport__icontains=q) |
             Q(organization__name__icontains=q)
-        ).distinct()
-
-        # LIMIT TO 20 RESULTS
-        # This makes the response lightning fast
-        results = search_qs[:20]
+        ).distinct()[:20]
 
         return Response(ProfileSerializer(results, many=True).data)

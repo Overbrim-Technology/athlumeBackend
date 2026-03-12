@@ -16,11 +16,14 @@ class User(AbstractUser):
         blank=True
     )
 
-    @property
     def role(self):
-        # We use hasattr to check for relationships without importing the models
-        if hasattr(self, 'athlete'):
+        # This hits the DB once, or 0 times if you used prefetch_related
+        group_names = {g.name for g in self.groups.all()}
+
+        if hasattr(self, 'athlete') or 'Athlete' in group_names:
             return 'athlete'
-        if hasattr(self, 'organization'):
+
+        if hasattr(self, 'organization') or 'Organization' in group_names:
             return 'organization'
+
         return 'user'

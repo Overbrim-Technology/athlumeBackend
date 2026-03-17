@@ -69,5 +69,3 @@ class ProfileSerializer(serializers.ModelSerializer):
                   'facebook',
                   'x',
                   'instagram',]
-
-

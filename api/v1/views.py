@@ -3,13 +3,15 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from organizations.models import Organization, School
-from athletes.models import Athlete, Profile
-from .serializers import OrganizationSerializer, SchoolSerializer, AthleteSerializer, ProfileSerializer
+from athletes.models import Athlete, Profile, Achievement, Stat, Video
+from .serializers import (OrganizationSerializer, SchoolSerializer, AthleteSerializer, 
+                          ProfileSerializer, AchievementSerializer, StatSerializer, VideoSerializer)
 from home.models import FeaturedAthlete, Highlight
 from home.serializers import HighlightSerializer
-from .permissions import IsAthleteOwnerOrReadOnly, IsOrganizationOwnerOrAdmin, IsAuthenticatedForDashboard
+from .permissions import IsAthleteOwnerOrReadOnly, IsOrganizationOwnerOrAdmin, IsAuthenticatedForDashboard, IsProfileOwner
 
 # Create your views here.
 # --- Standard CRUD ViewSets ---
@@ -190,3 +192,124 @@ class GlobalSearchView(APIView):
         ).distinct()[:20]
 
         return Response(ProfileSerializer(results, many=True).data)
+
+
+# --- Achievement, Stat, and Video ViewSets ---
+class AchievementViewSet(viewsets.ModelViewSet):
+    queryset = Achievement.objects.all()
+    serializer_class = AchievementSerializer
+    permission_classes = [IsProfileOwner]
+
+    def get_queryset(self):
+        """
+        Filter achievements based on profile ownership.
+        - Public: Anyone can view all achievements (read-only)
+        - Authenticated: Athletes can only see their own achievements for editing
+        """
+        user = self.request.user
+        
+        # For read-only requests, return all achievements
+        if self.request.method in ['GET', 'HEAD', 'OPTIONS']:
+            return Achievement.objects.all()
+        
+        # For write operations, filter to only this athlete's achievements
+        if user and user.is_authenticated:
+            try:
+                profile = Profile.objects.get(user=user)
+                return Achievement.objects.filter(profile=profile)
+            except Profile.DoesNotExist:
+                pass
+        
+        # Admin sees all
+        if user and user.is_staff:
+            return Achievement.objects.all()
+        
+        return Achievement.objects.none()
+
+    def perform_create(self, serializer):
+        """Automatically associate the achievement with the authenticated user's profile"""
+        try:
+            profile = Profile.objects.get(user=self.request.user)
+            serializer.save(profile=profile)
+        except Profile.DoesNotExist:
+            raise ValidationError("User does not have a Profile. Please create one first.")
+
+
+class StatViewSet(viewsets.ModelViewSet):
+    queryset = Stat.objects.all()
+    serializer_class = StatSerializer
+    permission_classes = [IsProfileOwner]
+
+    def get_queryset(self):
+        """
+        Filter stats based on profile ownership.
+        - Public: Anyone can view all stats (read-only)
+        - Authenticated: Athletes can only see their own stats for editing
+        """
+        user = self.request.user
+        
+        # For read-only requests, return all stats
+        if self.request.method in ['GET', 'HEAD', 'OPTIONS']:
+            return Stat.objects.all()
+        
+        # For write operations, filter to only this athlete's stats
+        if user and user.is_authenticated:
+            try:
+                profile = Profile.objects.get(user=user)
+                return Stat.objects.filter(profile=profile)
+            except Profile.DoesNotExist:
+                pass
+        
+        # Admin sees all
+        if user and user.is_staff:
+            return Stat.objects.all()
+        
+        return Stat.objects.none()
+
+    def perform_create(self, serializer):
+        """Automatically associate the stat with the authenticated user's profile"""
+        try:
+            profile = Profile.objects.get(user=self.request.user)
+            serializer.save(profile=profile)
+        except Profile.DoesNotExist:
+            raise ValidationError("User does not have a Profile. Please create one first.")
+
+
+class VideoViewSet(viewsets.ModelViewSet):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [IsProfileOwner]
+
+    def get_queryset(self):
+        """
+        Filter videos based on profile ownership.
+        - Public: Anyone can view all videos (read-only)
+        - Authenticated: Athletes can only see their own videos for editing
+        """
+        user = self.request.user
+        
+        # For read-only requests, return all videos
+        if self.request.method in ['GET', 'HEAD', 'OPTIONS']:
+            return Video.objects.all()
+        
+        # For write operations, filter to only this athlete's videos
+        if user and user.is_authenticated:
+            try:
+                profile = Profile.objects.get(user=user)
+                return Video.objects.filter(profile=profile)
+            except Profile.DoesNotExist:
+                pass
+        
+        # Admin sees all
+        if user and user.is_staff:
+            return Video.objects.all()
+        
+        return Video.objects.none()
+
+    def perform_create(self, serializer):
+        """Automatically associate the video with the authenticated user's profile"""
+        try:
+            profile = Profile.objects.get(user=self.request.user)
+            serializer.save(profile=profile)
+        except Profile.DoesNotExist:
+            raise ValidationError("User does not have a Profile. Please create one first.")

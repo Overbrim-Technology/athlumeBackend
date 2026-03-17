@@ -5,8 +5,9 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 
 # Import your views from the v1/views folder
-from .views import AppHomeView, GlobalSearchView
-from .views import AthleteViewSet, ProfileViewSet, OrganizationViewSet, SchoolViewSet
+from .views import (AppHomeView, GlobalSearchView, AthleteViewSet, ProfileViewSet, 
+                    OrganizationViewSet, SchoolViewSet, AchievementViewSet, 
+                    StatViewSet, VideoViewSet)
 
 # --- Router Setup for ViewSets ---
 # Routers automatically create URLs like /athletes/, /athletes/5/, etc.
@@ -15,6 +16,9 @@ router.register(r'athletes', AthleteViewSet, basename='athlete')
 router.register(r'profiles', ProfileViewSet, basename='profile')
 router.register(r'organizations', OrganizationViewSet, basename='organization')
 router.register(r'schools', SchoolViewSet, basename='school')
+router.register(r'achievements', AchievementViewSet, basename='achievement')
+router.register(r'stats', StatViewSet, basename='stat')
+router.register(r'videos', VideoViewSet, basename='video')
 
 urlpatterns = [
     # 1. The App Home Endpoint (Custom APIView)

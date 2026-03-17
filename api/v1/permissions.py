@@ -97,3 +97,34 @@ class IsAuthenticatedForDashboard(permissions.BasePermission):
         is_org_owner = Organization.objects.filter(owner=request.user).exists()
         
         return is_athlete or is_org_owner or request.user.is_staff
+
+
+class IsProfileOwner(permissions.BasePermission):
+    """
+    Permission to allow only profile owners to create, update, and delete
+    their achievements, stats, and videos.
+    """
+
+    def has_permission(self, request, view):
+        # Anyone can view (GET requests)
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        # Write operations require authentication
+        return request.user and request.user.is_authenticated
+
+    def has_object_permission(self, request, view, obj):
+        # Anyone can view (read-only)
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        # Admin has full access
+        if request.user and request.user.is_staff:
+            return True
+        
+        # Check if the user owns the profile to which this object belongs
+        profile = getattr(obj, 'profile', None)
+        if profile and profile.user == request.user:
+            return True
+        
+        return False

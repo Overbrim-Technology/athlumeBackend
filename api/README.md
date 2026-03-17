@@ -1,4 +1,4 @@
-# 🏆 Athlete Achievement & Organization API
+# 🏆 Athlete Profile & Organization API
 
 This API serves as the backbone for managing athlete portfolios, organizational hierarchies, and school affiliations. It features a robust "Medal Cabinet" system using emoji-based achievements and strict multi-table inheritance for data integrity.
 
@@ -304,6 +304,34 @@ results = response.json()["search_results"]
   "graduation_year": 2025
 }
 ```
+
+#### Achievements
+| Method | Endpoint | Auth Required |
+| --- | --- | --- |
+| `GET` | `/api/v1/achievements/` | Yes |
+| `GET` | `/api/v1/achievements/{id}/` | Yes |
+| `POST` | `/api/v1/achievements/` | Yes |
+| `PATCH` | `/api/v1/achievements/{id}/` | Yes |
+| `DELETE` | `/api/v1/achievements/{id}/` | Yes |
+
+#### Stats
+| Method | Endpoint | Auth Required |
+| --- | --- | --- |
+| `GET` | `/api/v1/stats/` | Yes |
+| `GET` | `/api/v1/stats/{id}/` | Yes |
+| `POST` | `/api/v1/stats/` | Yes |
+| `PATCH` | `/api/v1/stats/{id}/` | Yes |
+| `DELETE` | `/api/v1/stats/{id}/` | Yes |
+
+#### Videos
+| Method | Endpoint | Auth Required |
+| --- | --- | --- |
+| `GET` | `/api/v1/videos/` | Yes |
+| `GET` | `/api/v1/videos/{id}/` | Yes |
+| `POST` | `/api/v1/videos/` | Yes |
+| `PATCH` | `/api/v1/videos/{id}/` | Yes |
+| `DELETE` | `/api/v1/videos/{id}/` | Yes |
+
 
 ---
 

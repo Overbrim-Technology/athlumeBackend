@@ -153,7 +153,7 @@ class AppHomeView(APIView):
         # 4. Highlights (Crucial optimization)
         # Highlights almost always show the Athlete's name or photo
         highlights_qs = Highlight.objects.filter(published=True).select_related(
-            'athlete__user'
+            'created_by'
         ).order_by('-created_at')[:5]
 
         # --- SERIALIZATION ---

@@ -82,5 +82,10 @@ class SocialMedia(models.Model):
     platform = models.CharField(max_length=100)
     url = models.URLField()
 
+    class Meta:
+        ordering = ['platform']
+        verbose_name = 'Social Media'
+        verbose_name_plural = 'Social Media'
+
     def __str__(self):
         return f"{self.platform} - {self.url}"

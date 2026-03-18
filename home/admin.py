@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Highlight, FeaturedAthlete
+from .models import Highlight, FeaturedAthlete, SocialMedia
 
 
 @admin.register(Highlight)
@@ -22,3 +22,9 @@ class FeaturedAthleteAdmin(admin.ModelAdmin):
         if not obj.added_by:
             obj.added_by = request.user
         super().save_model(request, obj, form, change)
+
+
+@admin.register(SocialMedia)
+class SocialMediaAdmin(admin.ModelAdmin):
+    list_display = ('platform', 'url')
+    search_fields = ('platform',)

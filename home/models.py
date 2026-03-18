@@ -77,3 +77,10 @@ class FeaturedAthlete(models.Model):
 
     def __str__(self):
         return f"Featured: {self.athlete.first_name} {self.athlete.last_name}"
+
+class SocialMedia(models.Model):
+    platform = models.CharField(max_length=100)
+    url = models.URLField()
+
+    def __str__(self):
+        return f"{self.platform} - {self.url}"

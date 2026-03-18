@@ -9,8 +9,8 @@ from organizations.models import Organization, School
 from athletes.models import Athlete, Profile, Achievement, Stat, Video
 from .serializers import (OrganizationSerializer, SchoolSerializer, AthleteSerializer, 
                           ProfileSerializer, AchievementSerializer, StatSerializer, VideoSerializer)
-from home.models import FeaturedAthlete, Highlight
-from home.serializers import HighlightSerializer
+from home.models import FeaturedAthlete, Highlight, SocialMedia
+from home.serializers import HighlightSerializer, SocialMediaSerializer
 from .permissions import IsAthleteOwnerOrReadOnly, IsOrganizationOwnerOrAdmin, IsAuthenticatedForDashboard, IsProfileOwner
 
 # Create your views here.
@@ -158,6 +158,8 @@ class AppHomeView(APIView):
             'created_by'
         ).order_by('-created_at')[:5]
 
+        socialmedia = SocialMedia.objects.all().order_by('platform')
+
         # --- SERIALIZATION ---
         payload = {
             "banner_message": "Welcome to the Athlete Portal",
@@ -165,6 +167,7 @@ class AppHomeView(APIView):
             "top_schools": SchoolSerializer(top_schools, many=True, context={"request": request}).data,
             "partner_organizations": OrganizationSerializer(recent_orgs, many=True, context={"request": request}).data,
             "recent_highlights": HighlightSerializer(highlights_qs, many=True, context={"request": request}).data,
+            "social_media": SocialMediaSerializer(socialmedia, many=True, context={"request": request}).data,
         }
 
         return Response(payload)

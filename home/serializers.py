@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Highlight
-
+from .models import Highlight, SocialMedia
 
 class HighlightSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(use_url=True)
@@ -8,3 +7,8 @@ class HighlightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Highlight
         fields = ['id', 'title', 'body', 'image', 'url', 'created_by', 'created_at', 'published']
+
+class SocialMediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialMedia
+        fields = ['id', 'platform', 'url']

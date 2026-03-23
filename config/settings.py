@@ -82,12 +82,17 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_HOST = 'smtp.sendgrid.net' # Or your provider
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'apikey' # Example for SendGrid
-# EMAIL_HOST_PASSWORD = 'your-secure-api-ke'
-DEFAULT_FROM_EMAIL = 'athlume@gmail.com'
+# Namecheap Private Email Settings
+# (Use 'mail.yourdomain.com' if you are using cPanel email instead)
+EMAIL_HOST = 'mail.athlumesports.com' 
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'support@athlumesports.com' # Your full Namecheap email
+EMAIL_HOST_PASSWORD = '#support@1234athlume'
+
+# This must match your EMAIL_HOST_USER or Namecheap might block it as "Spoofing"
+DEFAULT_FROM_EMAIL = 'support@athlumesports.com'
 PASSWORD_RESET_CONFIRM_URL = 'https://athlumesports.com/reset-password/{uid}/{token}'
 
 # Optional: Disable email verification for development (makes testing easier)

@@ -15,8 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from allauth.account.views import confirm_email
+from django.views.generic import TemplateView
 
 admin.site.site_header = 'Athlume'
 admin.site.site_title = 'Athlume Profile'
@@ -35,6 +36,13 @@ urlpatterns = [
     path('api/v1/auth/registration/account-confirm-email/<str:key>/', 
          confirm_email, 
          name='account_confirm_email'),
+
+    # This name must be 'password_reset_confirm' exactly.
+    # The 'uidb64' and 'token' are the parameters Django injects into the email.
+    re_path(
+        r'^password-reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',
+        TemplateView.as_view(template_name="password_reset_confirm.html"),
+        name='password_reset_confirm'),
     
     # 3. Your App Endpoints
     path('api/', include('api.urls')), 

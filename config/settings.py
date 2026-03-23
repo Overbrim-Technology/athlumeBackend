@@ -76,8 +76,27 @@ SITE_ID = 1
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/athlmaot/admin/media/'
 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_HOST = 'smtp.sendgrid.net' # Or your provider
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'apikey' # Example for SendGrid
+# EMAIL_HOST_PASSWORD = 'your-secure-api-ke'
+DEFAULT_FROM_EMAIL = 'athlume@gmail.com'
+PASSWORD_RESET_CONFIRM_URL = 'https://athlumesports.com/reset-password/{uid}/{token}'
+
 # Optional: Disable email verification for development (makes testing easier)
+# Users cannot log in until they click the link in their email
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+
+# Ensure the user is blocked from logging in without a verified email
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -113,20 +132,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#         # 'OPTIONS': {
-#         #     'charset': 'utf8mb4',
-#         #     'use_unicode': True,
-#         # },
-#     }
-# }
 
 DATABASES = {
     'default': {

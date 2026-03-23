@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from allauth.account.views import confirm_email
+
 admin.site.site_header = 'Athlume'
 admin.site.site_title = 'Athlume Profile'
 
@@ -28,7 +30,12 @@ urlpatterns = [
 
     # 2. Signup / Registration
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
-
+    
+    # This URL is what is actually sent in the email
+    path('api/v1/auth/registration/account-confirm-email/<str:key>/', 
+         confirm_email, 
+         name='account_confirm_email'),
+    
     # 3. Your App Endpoints
     path('api/', include('api.urls')), 
 ]

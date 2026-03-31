@@ -81,7 +81,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Namecheap Private Email Settings
 # (Use 'mail.yourdomain.com' if you are using cPanel email instead)
 EMAIL_HOST = 'mail.athlumesports.com' 
@@ -89,7 +89,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'support@athlumesports.com' # Your full Namecheap email
-EMAIL_HOST_PASSWORD = '#support@1234athlume'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # Store this securely in .env
 
 # This must match your EMAIL_HOST_USER or Namecheap might block it as "Spoofing"
 DEFAULT_FROM_EMAIL = 'support@athlumesports.com'
@@ -97,11 +97,9 @@ PASSWORD_RESET_CONFIRM_URL = 'https://athlumesports.com/reset-password/{uid}/{to
 
 # Optional: Disable email verification for development (makes testing easier)
 # Users cannot log in until they click the link in their email
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-
-
-# Ensure the user is blocked from logging in without a verified email
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

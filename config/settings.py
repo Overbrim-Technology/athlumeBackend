@@ -26,7 +26,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -84,9 +84,10 @@ ACCOUNT_USERNAME_REQUIRED = False
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Namecheap Private Email Settings
 # (Use 'mail.yourdomain.com' if you are using cPanel email instead)
-EMAIL_HOST = 'mail.athlumesports.com' 
-EMAIL_PORT = 465
+EMAIL_HOST = 'server377.web-hosting.com' 
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
 EMAIL_HOST_USER = 'support@athlumesports.com' # Your full Namecheap email
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # Store this securely in .env

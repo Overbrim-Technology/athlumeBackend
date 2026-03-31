@@ -85,7 +85,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # Namecheap Private Email Settings
 # (Use 'mail.yourdomain.com' if you are using cPanel email instead)
 EMAIL_HOST = 'mail.athlumesports.com' 
-EMAIL_PORT = 587
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'support@athlumesports.com' # Your full Namecheap email

@@ -141,7 +141,7 @@ class AppHomeView(APIView):
         featured_entries = FeaturedAthlete.objects.filter(active=True).select_related(
             'athlete__user',          # To get first/last name
             'athlete__organization'   # To get the school/org name
-        )[:5]
+        ).order_by('order')[:5]
         featured_athletes = [fe.athlete for fe in featured_entries]
 
         # 2. Schools (Usually simple, but order_by is good)

@@ -101,6 +101,7 @@ PASSWORD_RESET_CONFIRM_URL = 'https://athlumesports.com/reset-password/{uid}/{to
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Force Django to redirect to your main site after verification
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'https://athlumesports.com/login/'

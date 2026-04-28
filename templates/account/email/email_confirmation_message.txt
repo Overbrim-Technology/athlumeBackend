@@ -1,0 +1,10 @@
+Welcome to Your Athlume Sports!
+
+Please click the link below to verify your email address and activate your account on athlumesports.com:
+
+{{ activate_url }}
+
+If you didn't request this, you can safely ignore this email.
+
+Thank you!
+The Athlume Sports Team

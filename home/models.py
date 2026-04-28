@@ -16,7 +16,7 @@ def validate_max_size(value):
 
 class Highlight(models.Model):
     title = models.CharField(max_length=200)
-    body = models.TextField(blank=True, null=True)
+    body = models.TextField(blank=True, null=True, max_length=1000)
     image = models.ImageField(upload_to='highlight_images/', 
                               validators=[validate_max_size],
                               blank=True, null=True)

@@ -98,7 +98,7 @@ PASSWORD_RESET_CONFIRM_URL = 'https://athlumesports.com/reset-password/{uid}/{to
 
 # Optional: Disable email verification for development (makes testing easier)
 # Users cannot log in until they click the link in their email
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 
